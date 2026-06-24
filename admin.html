@@ -202,12 +202,8 @@
     <p>Admin Panel</p>
     <div class="error" id="loginError"></div>
     <div class="form-group">
-      <label>Email</label>
-      <input type="email" id="emailInput" placeholder="admin@formadesign.com" value="admin@formadesign.com">
-    </div>
-    <div class="form-group">
       <label>Password</label>
-      <input type="password" id="passwordInput" placeholder="Enter password">
+      <input type="password" id="passwordInput" placeholder="Enter password" onkeypress="if(event.key==='Enter') login()">
     </div>
     <button class="btn" onclick="login()">Login</button>
   </div>
@@ -264,70 +260,36 @@
 
 </div>
 
-<!-- FIREBASE SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js"></script>
+<script>
+  const PASSWORD = "formadesign414";
 
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyBhvIQUERvohvNBrFGzb09zlP3OvrCDaqc",
-    authDomain: "formadesign-website.firebaseapp.com",
-    projectId: "formadesign-website",
-    storageBucket: "formadesign-website.firebasestorage.app",
-    messagingSenderId: "858832995090",
-    appId: "1:858832995090:web:e99dfe1886d0acd55ee9cb",
-    measurementId: "G-JJ1XK8QFCH"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
-
-  // LOGIN
   function login() {
-    const email = document.getElementById('emailInput').value;
     const password = document.getElementById('passwordInput').value;
     const errorDiv = document.getElementById('loginError');
 
-    if (!email || !password) {
-      errorDiv.textContent = 'Please enter email and password';
+    if (!password) {
+      errorDiv.textContent = 'Please enter password';
       errorDiv.style.display = 'block';
       return;
     }
 
-    auth.signInWithEmailAndPassword(email, password)
-      .then(user => {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('dashboard').classList.add('active');
-        loadProjects();
-      })
-      .catch(error => {
-        errorDiv.textContent = error.message;
-        errorDiv.style.display = 'block';
-      });
-  }
-
-  // LOGOUT
-  function logout() {
-    auth.signOut().then(() => {
-      document.getElementById('loginScreen').style.display = 'block';
-      document.getElementById('dashboard').classList.remove('active');
-      document.getElementById('emailInput').value = 'admin@formadesign.com';
+    if (password === PASSWORD) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').classList.add('active');
       document.getElementById('passwordInput').value = '';
-    });
+      loadProjects();
+    } else {
+      errorDiv.textContent = 'Incorrect password';
+      errorDiv.style.display = 'block';
+    }
   }
 
-  // ADD PROJECT
+  function logout() {
+    document.getElementById('loginScreen').style.display = 'block';
+    document.getElementById('dashboard').classList.remove('active');
+    document.getElementById('passwordInput').value = '';
+  }
+
   function addProject() {
     const name = document.getElementById('projectName').value;
     const category = document.getElementById('projectCategory').value;
@@ -337,83 +299,85 @@
     const errorDiv = document.getElementById('addError');
     const successDiv = document.getElementById('successMsg');
 
+    errorDiv.style.display = 'none';
+
     if (!name || !category) {
       errorDiv.textContent = 'Project name and category are required';
       errorDiv.style.display = 'block';
       return;
     }
 
-    db.collection('projects').add({
+    // Get existing projects
+    let projects = JSON.parse(localStorage.getItem('formaProjects') || '[]');
+
+    // Add new project
+    projects.push({
+      id: Date.now(),
       name: name,
       category: category,
       description: description,
       image: image,
       link: link,
-      createdAt: new Date()
-    }).then(() => {
-      // Clear form
-      document.getElementById('projectName').value = '';
-      document.getElementById('projectCategory').value = '';
-      document.getElementById('projectDescription').value = '';
-      document.getElementById('projectImage').value = '';
-      document.getElementById('projectLink').value = '';
-      
-      // Show success
-      successDiv.style.display = 'block';
-      setTimeout(() => successDiv.style.display = 'none', 3000);
-      
-      // Reload projects
-      loadProjects();
-    }).catch(error => {
-      errorDiv.textContent = error.message;
-      errorDiv.style.display = 'block';
+      createdAt: new Date().toISOString()
     });
+
+    // Save to localStorage
+    localStorage.setItem('formaProjects', JSON.stringify(projects));
+
+    // Clear form
+    document.getElementById('projectName').value = '';
+    document.getElementById('projectCategory').value = '';
+    document.getElementById('projectDescription').value = '';
+    document.getElementById('projectImage').value = '';
+    document.getElementById('projectLink').value = '';
+
+    // Show success
+    successDiv.style.display = 'block';
+    setTimeout(() => successDiv.style.display = 'none', 3000);
+
+    // Reload projects
+    loadProjects();
   }
 
-  // LOAD PROJECTS
+  function deleteProject(id) {
+    if (confirm('Are you sure you want to delete this project?')) {
+      let projects = JSON.parse(localStorage.getItem('formaProjects') || '[]');
+      projects = projects.filter(p => p.id !== id);
+      localStorage.setItem('formaProjects', JSON.stringify(projects));
+      loadProjects();
+    }
+  }
+
   function loadProjects() {
     const projectsList = document.getElementById('projectsList');
+    const projects = JSON.parse(localStorage.getItem('formaProjects') || '[]');
+
     projectsList.innerHTML = '';
 
-    db.collection('projects').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
-      projectsList.innerHTML = '';
-      
-      if (snapshot.empty) {
-        projectsList.innerHTML = '<div class="empty">No projects yet. Add your first one above!</div>';
-        return;
-      }
+    if (projects.length === 0) {
+      projectsList.innerHTML = '<div class="empty">No projects yet. Add your first one above!</div>';
+      return;
+    }
 
-      snapshot.forEach(doc => {
-        const project = doc.data();
-        const html = `
-          <div class="project-item">
-            <div class="project-info">
-              <h3>${project.name}</h3>
-              <p><strong>${project.category}</strong></p>
-              <p>${project.description.substring(0, 80)}...</p>
-            </div>
-            <button class="delete-btn" onclick="deleteProject('${doc.id}')">Delete</button>
+    projects.reverse().forEach(project => {
+      const html = `
+        <div class="project-item">
+          <div class="project-info">
+            <h3>${project.name}</h3>
+            <p><strong>${project.category}</strong></p>
+            <p>${project.description.substring(0, 80)}${project.description.length > 80 ? '...' : ''}</p>
           </div>
-        `;
-        projectsList.innerHTML += html;
-      });
+          <button class="delete-btn" onclick="deleteProject(${project.id})">Delete</button>
+        </div>
+      `;
+      projectsList.innerHTML += html;
     });
   }
 
-  // DELETE PROJECT
-  function deleteProject(id) {
-    if (confirm('Are you sure?')) {
-      db.collection('projects').doc(id).delete();
-    }
-  }
-
-  // CHECK IF LOGGED IN
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('dashboard').classList.add('active');
-      loadProjects();
-    }
+  // Load projects on page load
+  window.addEventListener('load', () => {
+    // Check if already logged in (for this session)
+    // If you want persistence, you can use sessionStorage
   });
 </script>
 
