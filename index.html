@@ -118,6 +118,19 @@
     line-height: 1.4;
   }
 
+  /* GLOBAL DECORATIVE GRID — covers every page, always behind content */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+
   ::-webkit-scrollbar { width: 8px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 4px; }
@@ -153,7 +166,7 @@
     font-weight: 500;
     letter-spacing: 1px;
     color: var(--black);
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.03);
     transition: background 0.3s;
     cursor: pointer;
     white-space: nowrap;
@@ -258,13 +271,13 @@
     letter-spacing: -10px;
     line-height: 0.85;
     color: var(--black);
-    text-align: right;
+    text-align: center;
     position: relative;
     z-index: 1;
     white-space: nowrap;
     width: 100%;
-    padding-right: 0;
-    margin-right: -8vw;
+    padding: 0;
+    margin: 0 auto;
   }
 
   /* Jar - positioned over letters, tilted 25deg left, minimal float */
@@ -336,6 +349,25 @@
   @keyframes scrollPulse {
     0%, 100% { transform: translateY(0); opacity: 0.7; }
     50% { transform: translateY(6px); opacity: 1; }
+  }
+
+  /* Work / Services / Contact heroes: the giant word sits at the top while
+     the subline + Scroll cue are pinned to the bottom. On shorter/wider
+     viewports they collided, so give the word extra room below and drop the
+     subline + scroll lower. (Home hero is handled separately and unaffected.) */
+  #page-work .hero,
+  #page-services .hero,
+  #page-contact .hero {
+    padding-top: 140px;
+    padding-bottom: 170px;
+  }
+  #page-work .hero-subline,
+  #page-services .hero-subline,
+  #page-contact .hero-subline,
+  #page-work .hero-scroll,
+  #page-services .hero-scroll,
+  #page-contact .hero-scroll {
+    bottom: 28px;
   }
 
   /* Hide global footer whenever a service detail page is active (CSS fallback) */
@@ -513,7 +545,7 @@
   .cta-btn.light {
     background: rgba(255,255,255,0.7);
     color: var(--black);
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.03);
   }
   .cta-btn.light .arrow { background: var(--black); color: white; }
 
@@ -658,7 +690,7 @@
     background: white;
     border-radius: 24px;
     padding: 32px;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.03);
   }
 
   /* Showcase card with real image */
@@ -864,7 +896,7 @@
       flex-wrap: wrap;
       bottom: 40px;
     }
-    .hero-mega-overflow { margin-right: -4vw; }
+    .hero-mega-overflow { margin: 0 auto; }
     .hero-mega-home {
       margin-right: -4vw;
       font-size: clamp(200px, 38vw, 360px);
@@ -917,7 +949,7 @@
     }
     .hero-mega-overflow {
       text-align: center !important;
-      margin-right: 0 !important;
+      margin: 0 auto !important;
       letter-spacing: -5px;
       font-size: clamp(80px, 22vw, 140px);
     }
@@ -1149,7 +1181,7 @@
     border-radius: 999px;
     font-size: 13px; font-weight: 500; letter-spacing: 1px;
     color: var(--black);
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.03);
     transition: all 0.3s; cursor: pointer;
     white-space: nowrap;
   }
@@ -1670,7 +1702,7 @@
     border-radius: 999px;
     font-size: 13px; font-weight: 500; letter-spacing: 1px;
     color: var(--black);
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.03);
     transition: all 0.3s; cursor: pointer;
     white-space: nowrap;
   }
@@ -1728,19 +1760,7 @@
     font-weight: 400;
   }
 
-  /* DECORATIVE GRID LINES */
-  .hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,0,0,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px);
-    background-size: 80px 80px;
-    pointer-events: none;
-    mask-image: radial-gradient(ellipse at top right, black 0%, transparent 70%);
-    -webkit-mask-image: radial-gradient(ellipse at top right, black 0%, transparent 70%);
-  }
+  /* DECORATIVE GRID LINES — handled globally by body::before */
 
   /* SECTIONS */
   section { padding: 80px 32px; }
@@ -2272,7 +2292,7 @@
     border-radius: 999px;
     font-size: 13px; font-weight: 500; letter-spacing: 1px;
     color: var(--black);
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.03);
     transition: all 0.3s; cursor: pointer;
     white-space: nowrap;
   }
@@ -2506,7 +2526,7 @@
     background: white;
     border-radius: 24px;
     padding: 40px 32px;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.03);
   }
   .process-number {
     width: 48px;
@@ -2692,7 +2712,7 @@
     border-radius: 999px;
     font-size: 13px; font-weight: 500; letter-spacing: 1px;
     color: var(--black);
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.03);
     transition: all 0.3s; cursor: pointer;
     white-space: nowrap;
   }
@@ -2926,7 +2946,7 @@
     background: white;
     border-radius: 24px;
     padding: 40px 32px;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.03);
   }
   .process-number {
     width: 48px;
@@ -3127,8 +3147,7 @@
   <a href="#" onclick="showPage('services'); toggleMenu(); return false;">Services</a>
   <a href="#" onclick="showPage('advertisement'); toggleMenu(); return false;">Advertisement</a>
   <a href="#" onclick="showPage('contact'); toggleMenu(); return false;">Contact</a>
-  <a href="#" onclick="showPage('admin'); toggleMenu(); return false;" style="color: var(--orange);">Admin Panel ◆</a>
-  <a href="#" onclick="showPage('project'); toggleMenu(); return false;" style="color: var(--orange);">View Sample Project ◆</a>
+
 </div>
 
 <!-- HOME -->
@@ -3333,9 +3352,8 @@
           WHATSAPP US
           <span class="arrow">→</span>
         </a>
-        <a href="mailto:hello@formadesign.com" class="cta-btn light">
-          EMAIL US
-          <span class="arrow">→</span>
+        <a href="mailto:hello@theformadesign.com" class="cta-btn light" style="gap: 0; font-weight: 500; letter-spacing: 0;">
+          Email Us at hello@theformadesign.com
         </a>
       </div>
     </div>
@@ -4252,22 +4270,7 @@
   </div>
 </section>
 
-<!-- SHOWCASE - 6 packaging pictures -->
-<section class="showcase-section">
-  <div class="showcase-header">
-    <h2 class="showcase-title">Recent <span class="accent">work.</span></h2>
-    <a href="https://wa.me/919899604579" target="_blank" class="pill-btn dark">
-      VIEW PORTFOLIO
-      <span class="icon-circle">
-        <svg viewBox="0 0 24 24" fill="white"><path d="M9 5l7 7-7 7" stroke="white" stroke-width="2.5" fill="none"/></svg>
-      </span>
-    </a>
-  </div>
 
-  <div class="container">
-    <div class="showcase-grid" id="packaging-showcase-grid"></div>
-  </div>
-</section>
 
 <!-- CATEGORIES STRIP -->
 <div class="categories">
@@ -4384,22 +4387,7 @@
   </div>
 </section>
 
-<!-- SHOWCASE - 6 campaign pictures -->
-<section class="showcase-section">
-  <div class="showcase-header">
-    <h2 class="showcase-title">Recent <span class="accent">campaigns.</span></h2>
-    <a href="https://wa.me/919899604579" target="_blank" class="pill-btn dark">
-      VIEW PORTFOLIO
-      <span class="icon-circle">
-        <svg viewBox="0 0 24 24" fill="white"><path d="M9 5l7 7-7 7" stroke="white" stroke-width="2.5" fill="none"/></svg>
-      </span>
-    </a>
-  </div>
 
-  <div class="container">
-    <div class="showcase-grid" id="campaigns-showcase-grid"></div>
-  </div>
-</section>
 
 <!-- CATEGORIES STRIP -->
 <div class="categories">
