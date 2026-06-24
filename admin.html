@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forma Design - Admin Panel</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #eef0ee;
+      padding: 20px;
+    }
+    .container { max-width: 800px; margin: 0 auto; }
+    
+    /* LOGIN SCREEN */
+    .login-box {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .login-box h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #0a0a0a;
+    }
+    .login-box p {
+      color: #8a8a8a;
+      margin-bottom: 30px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #0a0a0a;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #FF6B35;
+      box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 30px;
+      background: #0a0a0a;
+      color: white;
+      border: none;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .btn:hover { transform: scale(1.05); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .error {
+      color: #e74c3c;
+      margin-bottom: 15px;
+      padding: 10px;
+      background: #fadbd8;
+      border-radius: 8px;
+      display: none;
+    }
+    
+    /* ADMIN DASHBOARD */
+    .dashboard { display: none; }
+    .dashboard.active { display: block; }
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #ddd;
+    }
+    .dashboard-header h1 { font-size: 32px; color: #0a0a0a; }
+    .logout-btn {
+      background: #FF6B35;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      border: none;
+      font-weight: 600;
+    }
+    .logout-btn:hover { background: #e55a24; }
+    
+    /* ADD PROJECT FORM */
+    .add-project {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .add-project h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #0a0a0a;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .form-row.full { grid-template-columns: 1fr; }
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      resize: vertical;
+      min-height: 100px;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #FF6B35;
+      box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    }
+    
+    /* PROJECTS LIST */
+    .projects-list {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .projects-list h2 {
+      padding: 20px;
+      border-bottom: 2px solid #ddd;
+      font-size: 20px;
+      color: #0a0a0a;
+    }
+    .project-item {
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .project-item:last-child { border-bottom: none; }
+    .project-info h3 {
+      font-size: 16px;
+      color: #0a0a0a;
+      margin-bottom: 5px;
+    }
+    .project-info p {
+      color: #8a8a8a;
+      font-size: 13px;
+    }
+    .delete-btn {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .delete-btn:hover { background: #c0392b; }
+    .empty { padding: 40px; text-align: center; color: #8a8a8a; }
+    .success {
+      color: #27ae60;
+      margin-bottom: 15px;
+      padding: 10px;
+      background: #d5f4e6;
+      border-radius: 8px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="login-box">
+    <h1>Forma Design</h1>
+    <p>Admin Panel</p>
+    <div class="error" id="loginError"></div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="emailInput" placeholder="admin@formadesign.com" value="admin@formadesign.com">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="passwordInput" placeholder="Enter password">
+    </div>
+    <button class="btn" onclick="login()">Login</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="dashboard">
+    <div class="dashboard-header">
+      <h1>Admin Panel</h1>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- ADD PROJECT -->
+    <div class="add-project">
+      <h2>Add New Project</h2>
+      <div class="success" id="successMsg">Project added successfully!</div>
+      <div class="error" id="addError"></div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>Project Name</label>
+          <input type="text" id="projectName" placeholder="e.g., Rasberry Jam Packaging">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <input type="text" id="projectCategory" placeholder="e.g., Packaging Design">
+        </div>
+      </div>
+
+      <div class="form-group full">
+        <label>Description</label>
+        <textarea id="projectDescription" placeholder="Describe the project..."></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Image URL</label>
+          <input type="url" id="projectImage" placeholder="https://example.com/image.jpg">
+        </div>
+        <div class="form-group">
+          <label>Link/URL</label>
+          <input type="url" id="projectLink" placeholder="https://example.com">
+        </div>
+      </div>
+
+      <button class="btn" onclick="addProject()">Add Project</button>
+    </div>
+
+    <!-- PROJECTS LIST -->
+    <div class="projects-list">
+      <h2>Your Projects</h2>
+      <div id="projectsList" class="empty">No projects yet. Add your first one above!</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FIREBASE SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js"></script>
+
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBhvIQUERvohvNBrFGzb09zlP3OvrCDaqc",
+    authDomain: "formadesign-website.firebaseapp.com",
+    projectId: "formadesign-website",
+    storageBucket: "formadesign-website.firebasestorage.app",
+    messagingSenderId: "858832995090",
+    appId: "1:858832995090:web:e99dfe1886d0acd55ee9cb",
+    measurementId: "G-JJ1XK8QFCH"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+
+  // LOGIN
+  function login() {
+    const email = document.getElementById('emailInput').value;
+    const password = document.getElementById('passwordInput').value;
+    const errorDiv = document.getElementById('loginError');
+
+    if (!email || !password) {
+      errorDiv.textContent = 'Please enter email and password';
+      errorDiv.style.display = 'block';
+      return;
+    }
+
+    auth.signInWithEmailAndPassword(email, password)
+      .then(user => {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboard').classList.add('active');
+        loadProjects();
+      })
+      .catch(error => {
+        errorDiv.textContent = error.message;
+        errorDiv.style.display = 'block';
+      });
+  }
+
+  // LOGOUT
+  function logout() {
+    auth.signOut().then(() => {
+      document.getElementById('loginScreen').style.display = 'block';
+      document.getElementById('dashboard').classList.remove('active');
+      document.getElementById('emailInput').value = 'admin@formadesign.com';
+      document.getElementById('passwordInput').value = '';
+    });
+  }
+
+  // ADD PROJECT
+  function addProject() {
+    const name = document.getElementById('projectName').value;
+    const category = document.getElementById('projectCategory').value;
+    const description = document.getElementById('projectDescription').value;
+    const image = document.getElementById('projectImage').value;
+    const link = document.getElementById('projectLink').value;
+    const errorDiv = document.getElementById('addError');
+    const successDiv = document.getElementById('successMsg');
+
+    if (!name || !category) {
+      errorDiv.textContent = 'Project name and category are required';
+      errorDiv.style.display = 'block';
+      return;
+    }
+
+    db.collection('projects').add({
+      name: name,
+      category: category,
+      description: description,
+      image: image,
+      link: link,
+      createdAt: new Date()
+    }).then(() => {
+      // Clear form
+      document.getElementById('projectName').value = '';
+      document.getElementById('projectCategory').value = '';
+      document.getElementById('projectDescription').value = '';
+      document.getElementById('projectImage').value = '';
+      document.getElementById('projectLink').value = '';
+      
+      // Show success
+      successDiv.style.display = 'block';
+      setTimeout(() => successDiv.style.display = 'none', 3000);
+      
+      // Reload projects
+      loadProjects();
+    }).catch(error => {
+      errorDiv.textContent = error.message;
+      errorDiv.style.display = 'block';
+    });
+  }
+
+  // LOAD PROJECTS
+  function loadProjects() {
+    const projectsList = document.getElementById('projectsList');
+    projectsList.innerHTML = '';
+
+    db.collection('projects').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+      projectsList.innerHTML = '';
+      
+      if (snapshot.empty) {
+        projectsList.innerHTML = '<div class="empty">No projects yet. Add your first one above!</div>';
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        const project = doc.data();
+        const html = `
+          <div class="project-item">
+            <div class="project-info">
+              <h3>${project.name}</h3>
+              <p><strong>${project.category}</strong></p>
+              <p>${project.description.substring(0, 80)}...</p>
+            </div>
+            <button class="delete-btn" onclick="deleteProject('${doc.id}')">Delete</button>
+          </div>
+        `;
+        projectsList.innerHTML += html;
+      });
+    });
+  }
+
+  // DELETE PROJECT
+  function deleteProject(id) {
+    if (confirm('Are you sure?')) {
+      db.collection('projects').doc(id).delete();
+    }
+  }
+
+  // CHECK IF LOGGED IN
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').classList.add('active');
+      loadProjects();
+    }
+  });
+</script>
+
+</body>
+</html>
