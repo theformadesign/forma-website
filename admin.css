@@ -1,0 +1,67 @@
+:root{
+  --orange:#FF6B35; --orange-dark:#e55a24;
+  --black:#0a0a0a; --bg:#eef0ee; --card:#ffffff;
+  --grey:#8a8a8a; --line:rgba(0,0,0,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--black);line-height:1.45}
+.hidden{display:none!important}
+.muted{color:var(--grey);font-size:13px}
+.brand{font-size:22px;font-weight:700;letter-spacing:-1px}
+.brand span{color:var(--orange)}
+.error{color:#c0392b;font-size:13px;margin-top:10px;min-height:16px}
+.status{font-size:13px;margin-top:10px;min-height:16px;color:var(--orange)}
+
+/* Buttons */
+.btn{border:none;border-radius:999px;padding:11px 22px;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit;transition:.2s}
+.btn-primary{background:var(--black);color:#fff}
+.btn-primary:hover{background:#1a1a1a}
+.btn-ghost{background:transparent;color:var(--black);border:1px solid var(--line)}
+.btn-ghost:hover{background:rgba(0,0,0,0.04)}
+.btn-mini{padding:6px 14px;font-size:12px;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer;font-weight:600;font-family:inherit}
+.btn-mini:hover{background:#f4f4f4}
+.btn-del{color:#c0392b;border-color:#f0c8c0}
+.btn-del:hover{background:#fdecea}
+
+/* Login */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.login-card{background:var(--card);border-radius:24px;padding:40px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,0.08)}
+.login-card .brand{font-size:30px;margin-bottom:8px}
+.login-card input{width:100%;margin-top:14px;padding:13px 16px;border:1px solid var(--line);border-radius:12px;font-size:15px;font-family:inherit}
+.login-card .btn{width:100%;margin-top:16px}
+
+/* Topbar */
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:18px 28px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.topbar-right{display:flex;align-items:center;gap:14px}
+
+/* Layout */
+.layout{max-width:1300px;margin:0 auto;padding:28px;display:grid;grid-template-columns:minmax(320px,420px) 1fr;gap:24px;align-items:start}
+@media(max-width:860px){.layout{grid-template-columns:1fr}}
+.panel{background:var(--card);border-radius:20px;padding:26px;box-shadow:0 8px 30px rgba(0,0,0,0.04)}
+.panel h2{font-size:20px;letter-spacing:-.5px;margin-bottom:18px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.panel-head h2{margin:0}
+.pill{background:var(--orange);color:#fff;font-size:12px;padding:3px 10px;border-radius:999px;font-weight:700}
+
+label{display:block;font-size:13px;font-weight:600;margin:16px 0 6px}
+label.checkbox{display:flex;align-items:center;gap:8px;font-weight:500;margin-top:18px}
+.panel input[type=text],.panel input[type=number]{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-family:inherit}
+.panel input[type=file]{margin-top:6px;font-size:13px;width:100%}
+.row{display:flex;gap:10px;margin-top:22px}
+
+.hero-preview{height:150px;border-radius:12px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;color:var(--grey);font-size:13px;border:1px dashed var(--line);margin-bottom:8px}
+.hero-preview.empty{background:#f6f6f6}
+.gallery-preview{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;min-height:4px}
+.gallery-preview .thumb{position:relative;width:70px;height:70px;border-radius:10px;background-size:cover;background-position:center;border:1px solid var(--line)}
+.gallery-preview .thumb button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:none;background:#c0392b;color:#fff;cursor:pointer;font-size:12px;line-height:1}
+
+/* Project list */
+.project-list{display:flex;flex-direction:column;gap:12px}
+.project-item{display:flex;align-items:center;gap:14px;padding:12px;border:1px solid var(--line);border-radius:14px}
+.project-thumb{width:64px;height:64px;border-radius:10px;background-size:cover;background-position:center;flex-shrink:0;background:linear-gradient(135deg,#FF6B35,#C2185B)}
+.project-meta{flex:1;min-width:0}
+.project-meta .t{font-weight:600;font-size:15px}
+.project-meta .s{font-size:12px;color:var(--grey)}
+.badge{display:inline-block;background:#fff3ee;color:var(--orange-dark);font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px}
+.project-actions{display:flex;gap:8px;flex-shrink:0}
+.empty-state{color:var(--grey);font-size:14px;padding:20px 0}
