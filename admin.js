@@ -3,8 +3,8 @@
    ================================================================= */
 
 // ---------- CONFIG: paste your Supabase values here ----------
-const SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR-ANON-PUBLIC-KEY';
+const SUPABASE_URL = 'https://lsjfjpjemgrbiazhqors.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_HXxuV10pLfF8ovB0PYGH1g_jgs6til6';
 const BUCKET = 'project-images';
 // -------------------------------------------------------------
 
