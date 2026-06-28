@@ -4975,7 +4975,7 @@
       console.warn('[Forma] Supabase not configured yet — showing placeholder cards.');
       return;
     }
-    var url = SUPABASE_URL + '/rest/v1/projects?select=*&order=sort_order.asc,created_at.asc&_=' + Date.now();
+    var url = SUPABASE_URL + '/rest/v1/projects?select=*&order=sort_order.asc,created_at.asc';
     fetch(url, { cache: 'no-store', headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY } })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
       .then(function (data) { projectsCache = data || []; renderGrids(); })
