@@ -793,7 +793,14 @@
   }
 
   /* INDIVIDUAL PROJECT PAGE */
-  .project-page { padding-top: 100px; }
+  .project-page {
+    padding-top: 100px;
+    background-color: #ffffff;
+    background-image:
+      linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
   .project-hero { padding: 60px 32px; }
   .project-hero-inner { max-width: 1500px; margin: 0 auto; }
   .back-link {
@@ -858,6 +865,21 @@
     grid-column: 1 / -1; aspect-ratio: 16/9;
     background: linear-gradient(135deg, #6E00FF, #B5179E);
   }
+  .pp-fact { margin-bottom: 28px; }
+  .pp-fact:last-child { margin-bottom: 0; }
+  .pp-fact-label { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--grey); margin-bottom: 6px; }
+  .pp-fact-value { font-size: 18px; font-weight: 600; color: var(--black); }
+  .pp-narrative { margin-bottom: 32px; }
+  .pp-narrative:last-child { margin-bottom: 0; }
+  .pp-narrative-label { font-size: 16px; font-weight: 600; color: var(--grey); margin-bottom: 10px; }
+  .project-quad-gallery {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 20px; margin: 20px 0 60px;
+  }
+  .project-quad-gallery .img-cell {
+    aspect-ratio: 4/5; border-radius: 24px; overflow: hidden;
+    background-size: cover; background-position: center; background-color: #f1f1f1;
+  }
   .project-next { padding: 100px 32px; text-align: center; }
   .project-next-label { font-size: 14px; color: var(--grey); margin-bottom: 20px; }
   .project-next-title {
@@ -886,6 +908,7 @@
     .project-section-label { position: relative; top: 0; }
     .project-solution-gallery { grid-template-columns: 1fr; }
     .project-solution-gallery .img-box-3 { grid-column: 1; }
+    .project-quad-gallery { gap: 12px; margin: 16px 0 40px; }
     .footer-main { flex-direction: column; align-items: flex-start; }
     .footer-bottom { flex-direction: column; align-items: stretch; border-radius: 24px; padding: 16px; }
     .footer-nav, .footer-right { justify-content: center; }
@@ -1074,6 +1097,7 @@
      RESPONSIVE — SMALL MOBILE (480px and below)
      ============================================ */
   @media (max-width: 480px) {
+    .project-quad-gallery { grid-template-columns: 1fr; gap: 16px; margin: 16px 0 40px; }
     .pill-btn {
       gap: 6px;
       padding: 5px 5px 5px 10px;
@@ -3525,53 +3549,49 @@
       <div class="project-hero-inner">
         <a href="#" onclick="showPage('work'); return false;" class="back-link">← Back to Work</a>
         <div class="project-meta">
-          <span class="tag-pill orange">Packaging</span>
-          <span class="tag-pill">2024</span>
-          <span class="tag-pill">Brand Identity</span>
+          <span class="tag-pill orange" id="pp-category">Packaging</span>
         </div>
-        <h1 class="project-title">Raspberry Potion.</h1>
-        <div class="project-hero-image"></div>
+        <h1 class="project-title" id="pp-title">Raspberry Potion.</h1>
+        <div class="project-hero-image" id="pp-hero"></div>
       </div>
     </div>
     <div class="project-content">
-      <div class="project-section">
-        <div class="project-section-label">The Business Context</div>
-        <div class="project-section-content"><p>Potion is an emerging Indian wellness brand offering freeze-dried fruits as everyday medicine. They needed a packaging system that felt both modern and rooted in Ayurvedic tradition.</p></div>
-      </div>
-      <div class="project-section">
-        <div class="project-section-label">The Tension</div>
-        <div class="project-section-content"><p>How do you make freeze-dried raspberries feel premium without losing the warmth of a wellness brand? The visual language had to bridge two opposing worlds — clinical and crafted.</p></div>
-      </div>
-      <div class="project-section">
-        <div class="project-section-label">What We Learned</div>
-        <div class="project-section-content"><p>Research showed customers were buying for two reasons: snacking and supplementing. The label needed to communicate both — function and pleasure — in a single glance.</p></div>
-      </div>
-      <div class="project-section">
-        <div class="project-section-label">Decisions Made</div>
-        <div class="project-section-content"><p>We chose a vertical wordmark to maximize shelf presence. A bold red anchored "RASPBERRY" while delicate botanical illustrations gave the bottle warmth and storytelling.</p></div>
-      </div>
-      <div class="project-section">
-        <div class="project-section-label">Trade-Offs Accepted</div>
-        <div class="project-section-content"><p>We sacrificed traditional ingredient callouts on the front label for a cleaner, art-forward design. Ingredients moved to the back — a risk that paid off in shelf differentiation.</p></div>
-      </div>
-      <div class="project-section">
-        <div class="project-section-label">The Solution</div>
+      <div class="project-section project-meta-row">
+        <div class="project-section-label">
+          <div class="pp-fact">
+            <div class="pp-fact-label">Client</div>
+            <div class="pp-fact-value" id="pp-client">—</div>
+          </div>
+          <div class="pp-fact">
+            <div class="pp-fact-label">Timeline</div>
+            <div class="pp-fact-value" id="pp-timeline">—</div>
+          </div>
+        </div>
         <div class="project-section-content">
-          <p>A complete packaging system with custom typography, a botanical illustration suite, and a flexible color palette that scales across 12 SKUs.</p>
-          <div class="project-solution-gallery">
-            <div class="img-box img-box-1"></div>
-            <div class="img-box img-box-2"></div>
-            <div class="img-box img-box-3"></div>
+          <div class="pp-narrative">
+            <div class="pp-narrative-label">The Challenge</div>
+            <p id="pp-challenge"></p>
+          </div>
+          <div class="pp-narrative">
+            <div class="pp-narrative-label">Strategy</div>
+            <p id="pp-strategy"></p>
           </div>
         </div>
       </div>
+
+      <div class="project-quad-gallery" id="pp-quad-gallery"></div>
+
       <div class="project-section">
-        <div class="project-section-label">Outcomes</div>
-        <div class="project-section-content"><p>Launched in 200+ stores. Sales exceeded projections by 40% in the first quarter. The brand was featured in Vogue India's wellness edit.</p></div>
+        <div class="project-section-label">The Solution</div>
+        <div class="project-section-content"><p id="pp-solution"></p></div>
+      </div>
+      <div class="project-section">
+        <div class="project-section-label">Impact</div>
+        <div class="project-section-content"><p id="pp-impact"></p></div>
       </div>
       <div class="project-section">
         <div class="project-section-label">Reflection</div>
-        <div class="project-section-content"><p>This project taught us that packaging is never just packaging — it's an editorial decision. Every label is a small magazine cover. Every shelf is a newsstand.</p></div>
+        <div class="project-section-content"><p id="pp-reflection"></p></div>
       </div>
     </div>
     <div class="project-next">
@@ -4829,8 +4849,8 @@
 <script>
 (function () {
   // ---------- CONFIG: paste your Supabase project values here ----------
-var SUPABASE_URL = 'https://lsjfjpjemgrbiazhqors.supabase.co';
-var SUPABASE_ANON_KEY = 'sb_publishable_HXxuV10pLfF8ovB0PYGH1g_jgs6til6';
+  var SUPABASE_URL = 'https://lsjfjpjemgrbiazhqors.supabase.co';
+  var SUPABASE_ANON_KEY = 'sb_publishable_HXxuV10pLfF8ovB0PYGH1g_jgs6til6';
   // --------------------------------------------------------------------
 
   // Gradient fallbacks reused from your existing work-card styles
@@ -4890,20 +4910,38 @@ var SUPABASE_ANON_KEY = 'sb_publishable_HXxuV10pLfF8ovB0PYGH1g_jgs6til6';
     document.body.appendChild(lb);
   }
 
+  function renderProjectPage(p) {
+    var setText = function (id, val) { var el = document.getElementById(id); if (el) el.textContent = val || ''; };
+
+    setText('pp-category', p.category || '');
+    setText('pp-title', (p.title || '') + '.');
+    setText('pp-client', p.client || '—');
+    setText('pp-timeline', p.timeline || '—');
+    setText('pp-challenge', p.challenge || '');
+    setText('pp-strategy', p.strategy || '');
+    setText('pp-solution', p.solution || '');
+    setText('pp-impact', p.impact || '');
+    setText('pp-reflection', p.reflection || '');
+
+    var hero = document.getElementById('pp-hero');
+    if (hero) hero.style.backgroundImage = p.hero_url ? "url('" + esc(p.hero_url) + "')" : '';
+
+    var gal = Array.isArray(p.gallery) ? p.gallery.slice(0, 4) : [];
+    var quad = document.getElementById('pp-quad-gallery');
+    if (quad) {
+      quad.style.display = gal.length ? '' : 'none';
+      quad.innerHTML = gal.map(function (u) {
+        return '<div class="img-cell" style="background-image:url(\'' + esc(u) + '\')"></div>';
+      }).join('');
+    }
+  }
+
   window.formaOpenProject = function (id) {
     var p = projectsCache.find(function (x) { return String(x.id) === String(id); });
     if (!p) return;
-    ensureLightbox();
-    document.getElementById('forma-lb-cat').textContent = p.category || '';
-    document.getElementById('forma-lb-title').textContent = p.title || '';
-    var gal = Array.isArray(p.gallery) ? p.gallery : [];
-    var g = document.getElementById('forma-lb-gallery');
-    if (!gal.length && p.hero_url) gal = [p.hero_url];
-    g.innerHTML = gal.length
-      ? gal.map(function (u) { return '<img src="' + esc(u) + '" alt="' + esc(p.title) + '">'; }).join('')
-      : '<div class="forma-lb-empty">No gallery images yet.</div>';
-    document.getElementById('forma-lightbox').classList.add('active');
-    document.body.style.overflow = 'hidden';
+    renderProjectPage(p);
+    window.showPage('project');
+    window.scrollTo({ top: 0, behavior: 'instant' });
   };
   window.formaCloseProject = function () {
     var lb = document.getElementById('forma-lightbox');

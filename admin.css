@@ -46,8 +46,10 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--b
 label{display:block;font-size:13px;font-weight:600;margin:16px 0 6px}
 label.checkbox{display:flex;align-items:center;gap:8px;font-weight:500;margin-top:18px}
 .panel input[type=text],.panel input[type=number]{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-family:inherit}
+.panel textarea{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-family:inherit;resize:vertical}
 .panel input[type=file]{margin-top:6px;font-size:13px;width:100%}
 .row{display:flex;gap:10px;margin-top:22px}
+.section-divider{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--orange-dark);margin:28px 0 4px;padding-top:18px;border-top:1px solid var(--line)}
 
 .hero-preview{height:150px;border-radius:12px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;color:var(--grey);font-size:13px;border:1px dashed var(--line);margin-bottom:8px}
 .hero-preview.empty{background:#f6f6f6}

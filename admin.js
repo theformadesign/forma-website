@@ -145,6 +145,13 @@ $('save-btn').addEventListener('click', async () => {
     sort_order: parseInt($('f-sort').value, 10) || 0,
     hero_url: heroUrl || null,
     gallery: galleryUrls,
+    client: $('f-client').value.trim(),
+    timeline: $('f-timeline').value.trim(),
+    challenge: $('f-challenge').value.trim(),
+    strategy: $('f-strategy').value.trim(),
+    solution: $('f-solution').value.trim(),
+    impact: $('f-impact').value.trim(),
+    reflection: $('f-reflection').value.trim(),
   };
   const editId = $('edit-id').value;
   $('save-btn').disabled = true;
@@ -171,6 +178,13 @@ window.editProject = (id) => {
   $('f-sort').value = p.sort_order || 0;
   heroUrl = p.hero_url || '';
   galleryUrls = Array.isArray(p.gallery) ? p.gallery.slice() : [];
+  $('f-client').value = p.client || '';
+  $('f-timeline').value = p.timeline || '';
+  $('f-challenge').value = p.challenge || '';
+  $('f-strategy').value = p.strategy || '';
+  $('f-solution').value = p.solution || '';
+  $('f-impact').value = p.impact || '';
+  $('f-reflection').value = p.reflection || '';
   renderHeroPreview(); renderGalleryPreview();
   $('form-title').textContent = 'Edit project';
   $('save-btn').textContent = 'Save changes';
@@ -198,6 +212,13 @@ function resetForm() {
   galleryUrls = [];
   $('f-hero-file').value = '';
   $('f-gallery-files').value = '';
+  $('f-client').value = '';
+  $('f-timeline').value = '';
+  $('f-challenge').value = '';
+  $('f-strategy').value = '';
+  $('f-solution').value = '';
+  $('f-impact').value = '';
+  $('f-reflection').value = '';
   renderHeroPreview(); renderGalleryPreview();
   $('form-title').textContent = 'Add project';
   $('save-btn').textContent = 'Add project';
