@@ -1,0 +1,44 @@
+{
+  "rewrites": [
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/work",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/services",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/advertisement",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/services/brand-identities",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/services/website-design",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/services/packaging-design",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/services/marketing-campaigns",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/work/:project",
+      "destination": "/index.html"
+    }
+  ]
+}
