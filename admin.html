@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Forma Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="admin.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="/admin.css?v=20261125-media-routes">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2"></script>
 </head>
 <body>
 
@@ -70,9 +70,16 @@
       <label>Strategy</label>
       <textarea id="f-strategy" rows="3" placeholder="How did we approach it?"></textarea>
 
-      <label>Gallery images <span class="muted">(4 recommended — shown in a grid)</span></label>
+      <label>Gallery images <span class="muted">(up to 12 images, plus a separate video)</span></label>
+      <p id="gallery-count" class="muted">0 / 12 images</p>
       <div id="gallery-preview" class="gallery-preview"></div>
       <input id="f-gallery-files" type="file" accept="image/*" multiple />
+
+      <label for="f-video-file">Project video <span class="muted">(optional, MP4 or WebM, up to 50 MB)</span></label>
+      <div id="video-preview" class="video-preview"></div>
+      <input id="f-video-file" type="file" accept="video/mp4,video/webm,.mp4,.webm" />
+      <button id="remove-video-btn" class="btn-mini hidden" type="button">Remove video</button>
+      <p class="muted">Keep this page open until the upload finishes, then save the project.</p>
 
       <label>The Solution</label>
       <textarea id="f-solution" rows="3" placeholder="What did we deliver?"></textarea>
@@ -87,7 +94,7 @@
         <button id="save-btn" class="btn btn-primary">Add project</button>
         <button id="cancel-btn" class="btn btn-ghost hidden">Cancel</button>
       </div>
-      <div id="form-status" class="status"></div>
+      <div id="form-status" class="status" role="status" aria-live="polite"></div>
     </section>
 
     <!-- List -->
@@ -100,6 +107,6 @@
   </main>
 </div>
 
-<script src="admin.js"></script>
+<script src="/admin.js?v=20261125-media-routes"></script>
 </body>
 </html>
