@@ -6,6 +6,8 @@
 const SUPABASE_URL = 'https://lsjfjpjemgrbiazhqors.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_HXxuV10pLfF8ovB0PYGH1g_jgs6til6';
 const BUCKET = 'project-images';
+const MAX_GALLERY_IMAGES = 12;
+const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
 // -------------------------------------------------------------
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -17,7 +19,15 @@ const appView = $('app-view');
 
 // In-memory form state for images
 let heroUrl = '';            // existing or freshly uploaded hero URL
-let galleryUrls = [];        // array of gallery URLs
+let galleryUrls = [];        // image URLs; video remains a URL in the existing gallery column
+let videoUrl = '';
+let mediaBusy = false;
+function isVideoUrl(url) { return /\.(mp4|webm)(?:[?#]|$)/i.test(url); }
+function setMediaBusy(busy) {
+  mediaBusy = busy;
+  ['save-btn', 'cancel-btn', 'f-hero-file', 'f-gallery-files', 'f-video-file', 'remove-video-btn'].forEach(id => { $(id).disabled = busy; });
+  document.querySelectorAll('.project-actions button, #gallery-preview button').forEach(el => { el.disabled = busy; });
+}
 
 // ---------------- AUTH ----------------
 async function refreshSession() {
@@ -53,10 +63,10 @@ $('logout-btn').addEventListener('click', async () => {
 });
 
 // ---------------- IMAGE UPLOAD ----------------
-async function uploadImage(file) {
+async function uploadMedia(file) {
   const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
   const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-  const { error } = await sb.storage.from(BUCKET).upload(path, file, { upsert: false });
+  const { error } = await sb.storage.from(BUCKET).upload(path, file, { upsert: false, contentType: file.type || (/\.webm$/i.test(file.name) ? 'video/webm' : /\.mp4$/i.test(file.name) ? 'video/mp4' : 'application/octet-stream') });
   if (error) throw error;
   const { data } = sb.storage.from(BUCKET).getPublicUrl(path);
   return data.publicUrl;
@@ -64,28 +74,70 @@ async function uploadImage(file) {
 
 $('f-hero-file').addEventListener('change', async (e) => {
   const file = e.target.files[0];
-  if (!file) return;
+  if (!file || mediaBusy) return;
+  if (!file.type.startsWith('image/')) { setStatus('Please choose an image for the hero.'); e.target.value = ''; return; }
+  setMediaBusy(true);
   setStatus('Uploading hero…');
   try {
-    heroUrl = await uploadImage(file);
+    heroUrl = await uploadMedia(file);
     renderHeroPreview();
-    setStatus('Hero uploaded.');
+    setStatus('Hero uploaded. Save the project to publish it.');
   } catch (err) { setStatus('Upload failed: ' + err.message); }
+  finally { e.target.value = ''; setMediaBusy(false); }
 });
 
 $('f-gallery-files').addEventListener('change', async (e) => {
   const files = Array.from(e.target.files || []);
-  if (!files.length) return;
-  setStatus(`Uploading ${files.length} image(s)…`);
+  if (!files.length || mediaBusy) return;
+  if (galleryUrls.length + files.length > MAX_GALLERY_IMAGES) {
+    setStatus(`You can add up to ${MAX_GALLERY_IMAGES} gallery images. ${MAX_GALLERY_IMAGES - galleryUrls.length} space(s) remaining.`);
+    e.target.value = ''; return;
+  }
+  if (files.some(file => !file.type.startsWith('image/'))) {
+    setStatus('Choose images here. Use Project video for MP4 or WebM.'); e.target.value = ''; return;
+  }
+  setMediaBusy(true);
   try {
-    for (const f of files) {
-      const url = await uploadImage(f);
-      galleryUrls.push(url);
+    for (const [i, file] of files.entries()) {
+      setStatus(`Uploading image ${i + 1} of ${files.length}…`);
+      galleryUrls.push(await uploadMedia(file));
+      renderGalleryPreview();
     }
-    renderGalleryPreview();
-    setStatus('Gallery images uploaded.');
-    e.target.value = '';
-  } catch (err) { setStatus('Upload failed: ' + err.message); }
+    setStatus('Gallery images uploaded. Save the project to publish them.');
+  } catch (err) { setStatus('Upload failed: ' + err.message + '. Successfully uploaded images are kept in the preview.'); }
+  finally { e.target.value = ''; setMediaBusy(false); }
+});
+
+$('f-video-file').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file || mediaBusy) return;
+  if (!/\.(mp4|webm)$/i.test(file.name) || (file.type && !['video/mp4', 'video/webm'].includes(file.type))) {
+    setStatus('Please choose an MP4 or WebM video.'); e.target.value = ''; return;
+  }
+  if (file.size > MAX_VIDEO_BYTES) { setStatus('Please choose a video smaller than 50 MB.'); e.target.value = ''; return; }
+  setMediaBusy(true);
+  setStatus('Uploading video… Keep this page open.');
+  try {
+    videoUrl = await uploadMedia(file);
+    renderVideoPreview();
+    setStatus('Video uploaded. Save the project to publish it.');
+  } catch (err) { setStatus('Video upload failed: ' + err.message + '. Check that the project-images bucket allows video/mp4 and video/webm and your file size.'); }
+  finally { e.target.value = ''; setMediaBusy(false); }
+});
+
+function renderVideoPreview() {
+  const el = $('video-preview');
+  el.replaceChildren();
+  if (videoUrl) {
+    const video = document.createElement('video');
+    video.src = videoUrl; video.controls = true; video.playsInline = true; video.preload = 'metadata';
+    el.appendChild(video);
+  }
+  $('remove-video-btn').classList.toggle('hidden', !videoUrl);
+}
+$('remove-video-btn').addEventListener('click', () => {
+  if (mediaBusy) return;
+  videoUrl = ''; $('f-video-file').value = ''; renderVideoPreview();
 });
 
 function renderHeroPreview() {
@@ -96,11 +148,12 @@ function renderHeroPreview() {
 
 function renderGalleryPreview() {
   const el = $('gallery-preview');
+  $('gallery-count').textContent = `${galleryUrls.length} / ${MAX_GALLERY_IMAGES} images`;
   el.innerHTML = galleryUrls.map((u, i) =>
     `<div class="thumb" style="background-image:url('${u}')"><button onclick="removeGalleryImg(${i})" aria-label="Remove">✕</button></div>`
   ).join('');
 }
-window.removeGalleryImg = (i) => { galleryUrls.splice(i, 1); renderGalleryPreview(); };
+window.removeGalleryImg = (i) => { if (mediaBusy) return; galleryUrls.splice(i, 1); renderGalleryPreview(); };
 
 // ---------------- CRUD ----------------
 async function loadProjects() {
@@ -119,12 +172,14 @@ function renderList(items) {
       ? `style="background-image:url('${p.hero_url}')"`
       : `style="background:linear-gradient(135deg,#FF6B35,#C2185B)"`;
     const featured = p.featured ? '<span class="badge">Homepage</span>' : '';
-    const galCount = Array.isArray(p.gallery) ? p.gallery.length : 0;
+    const media = Array.isArray(p.gallery) ? p.gallery : [];
+    const galCount = media.filter(u => !isVideoUrl(u)).length;
+    const hasVideo = media.some(isVideoUrl);
     return `<div class="project-item">
         <div class="project-thumb" ${thumb}></div>
         <div class="project-meta">
           <div class="t">${escapeHtml(p.title)}${featured}</div>
-          <div class="s">${escapeHtml(p.category || '—')} · ${galCount} gallery img · order ${p.sort_order}</div>
+          <div class="s">${escapeHtml(p.category || '—')} · ${galCount} gallery img${hasVideo ? ' + video' : ''} · order ${p.sort_order}</div>
         </div>
         <div class="project-actions">
           <button class="btn-mini" onclick="editProject('${p.id}')">Edit</button>
@@ -136,6 +191,8 @@ function renderList(items) {
 }
 
 $('save-btn').addEventListener('click', async () => {
+  if (mediaBusy) { setStatus('Please wait for the upload to finish.'); return; }
+  if (galleryUrls.length > MAX_GALLERY_IMAGES) { setStatus('Please keep up to 12 gallery images.'); return; }
   const title = $('f-title').value.trim();
   if (!title) { setStatus('Title is required.'); return; }
   const payload = {
@@ -144,7 +201,7 @@ $('save-btn').addEventListener('click', async () => {
     featured: $('f-featured').checked,
     sort_order: parseInt($('f-sort').value, 10) || 0,
     hero_url: heroUrl || null,
-    gallery: galleryUrls,
+    gallery: videoUrl ? [...galleryUrls, videoUrl] : galleryUrls.slice(),
     client: $('f-client').value.trim(),
     timeline: $('f-timeline').value.trim(),
     challenge: $('f-challenge').value.trim(),
@@ -154,14 +211,16 @@ $('save-btn').addEventListener('click', async () => {
     reflection: $('f-reflection').value.trim(),
   };
   const editId = $('edit-id').value;
-  $('save-btn').disabled = true;
+  setMediaBusy(true);
   let error;
-  if (editId) {
-    ({ error } = await sb.from('projects').update(payload).eq('id', editId));
-  } else {
-    ({ error } = await sb.from('projects').insert(payload));
-  }
-  $('save-btn').disabled = false;
+  try {
+    if (editId) {
+      ({ error } = await sb.from('projects').update(payload).eq('id', editId));
+    } else {
+      ({ error } = await sb.from('projects').insert(payload));
+    }
+  } catch (err) { error = err; }
+  finally { setMediaBusy(false); }
   if (error) { setStatus('Save failed: ' + error.message); return; }
   setStatus(editId ? 'Project updated.' : 'Project added.');
   resetForm();
@@ -169,6 +228,7 @@ $('save-btn').addEventListener('click', async () => {
 });
 
 window.editProject = (id) => {
+  if (mediaBusy) return;
   const p = (window._projects || []).find((x) => String(x.id) === String(id));
   if (!p) return;
   $('edit-id').value = p.id;
@@ -177,7 +237,10 @@ window.editProject = (id) => {
   $('f-featured').checked = !!p.featured;
   $('f-sort').value = p.sort_order || 0;
   heroUrl = p.hero_url || '';
-  galleryUrls = Array.isArray(p.gallery) ? p.gallery.slice() : [];
+  const media = Array.isArray(p.gallery) ? p.gallery : [];
+  galleryUrls = media.filter(u => !isVideoUrl(u));
+  videoUrl = media.find(isVideoUrl) || '';
+  $('f-hero-file').value = ''; $('f-gallery-files').value = ''; $('f-video-file').value = '';
   $('f-client').value = p.client || '';
   $('f-timeline').value = p.timeline || '';
   $('f-challenge').value = p.challenge || '';
@@ -185,7 +248,7 @@ window.editProject = (id) => {
   $('f-solution').value = p.solution || '';
   $('f-impact').value = p.impact || '';
   $('f-reflection').value = p.reflection || '';
-  renderHeroPreview(); renderGalleryPreview();
+  renderHeroPreview(); renderGalleryPreview(); renderVideoPreview();
   $('form-title').textContent = 'Edit project';
   $('save-btn').textContent = 'Save changes';
   $('cancel-btn').classList.remove('hidden');
@@ -193,6 +256,7 @@ window.editProject = (id) => {
 };
 
 window.deleteProject = async (id, title) => {
+  if (mediaBusy) return;
   if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
   const { error } = await sb.from('projects').delete().eq('id', id);
   if (error) { setStatus('Delete failed: ' + error.message); return; }
@@ -203,6 +267,7 @@ window.deleteProject = async (id, title) => {
 $('cancel-btn').addEventListener('click', resetForm);
 
 function resetForm() {
+  if (mediaBusy) return;
   $('edit-id').value = '';
   $('f-title').value = '';
   $('f-category').value = '';
@@ -210,6 +275,8 @@ function resetForm() {
   $('f-sort').value = '0';
   heroUrl = '';
   galleryUrls = [];
+  videoUrl = '';
+  $('f-video-file').value = '';
   $('f-hero-file').value = '';
   $('f-gallery-files').value = '';
   $('f-client').value = '';
@@ -219,7 +286,7 @@ function resetForm() {
   $('f-solution').value = '';
   $('f-impact').value = '';
   $('f-reflection').value = '';
-  renderHeroPreview(); renderGalleryPreview();
+  renderHeroPreview(); renderGalleryPreview(); renderVideoPreview();
   $('form-title').textContent = 'Add project';
   $('save-btn').textContent = 'Add project';
   $('cancel-btn').classList.add('hidden');
