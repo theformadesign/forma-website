@@ -40,5 +40,20 @@
       "source": "/work/:project",
       "destination": "/index.html"
     }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "X-Forma-Build",
+          "value": "20261125-media-routes"
+        }
+      ]
+    }
   ]
 }
